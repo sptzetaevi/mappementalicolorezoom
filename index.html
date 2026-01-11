@@ -10,63 +10,83 @@
     html, body { height:100%; margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; color:var(--ink); }
     #app { height:100%; display:grid; grid-template-rows:auto 1fr; }
 
+    /* HEADER con wrapper interno + maniglia */
     header{
-      background:#fff; border-bottom:1px solid rgba(0,0,0,.08);
-      position:sticky; top:0; z-index:10;
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:#fff;
+      border-bottom:1px solid rgba(0,0,0,.08);
+      box-shadow:0 2px 6px rgba(0,0,0,.06);
+      box-sizing:border-box;
     }
-
     .headerInner{
-      display:flex; align-items:center; gap:8px;
-      padding:6px 8px 4px 8px;
-      font-size:14px;
-      transition:transform .25s ease, opacity .25s ease, max-height .25s ease;
-      transform-origin:top;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      padding:10px 12px;
     }
-
-    .headerInner.hidden{
-      transform:translateY(-100%);
-      opacity:0;
-      max-height:0;
-      pointer-events:none;
-    }
-
     .headerHandle{
-      height:6px;
-      background:linear-gradient(90deg, rgba(0,0,0,.08), rgba(0,0,0,.16), rgba(0,0,0,.08));
-      border-radius:999px;
-      margin:0 12px 6px 12px;
+      width:100%;
+      height:8px;
+      background:rgba(0,0,0,.20);
       cursor:pointer;
     }
-
-    .headerGroup{
-      display:flex; align-items:center; gap:6px;
-      padding-right:8px; border-right:1px solid rgba(0,0,0,.07);
-      margin-right:4px;
-    }
-    .headerGroup:last-child{
-      border-right:0; margin-right:0;
+    header.collapsed .headerInner{
+      display:none;
     }
 
     .btn{
-      border-radius:999px;
-      border:1px solid rgba(0,0,0,.15);
+      border:1px solid rgba(0,0,0,.18);
       background:#fff;
-      padding:4px 10px;
-      font-size:13px;
-      display:inline-flex; align-items:center; gap:4px;
+      border-radius:10px;
+      padding:7px 10px;
       cursor:pointer;
-      box-shadow:0 1px 1px rgba(0,0,0,.04);
+      font-size:13px;
+      user-select:none;
       white-space:nowrap;
     }
-    .btn.tiny{ padding:2px 7px; font-size:12px; }
-    .btn.circle{ width:26px; height:26px; padding:0; justify-content:center; }
-    .btn:hover{ background:#f3f4f6; }
-    .btn:active{ transform:translateY(1px); box-shadow:none; }
+    .btn:hover{ background:#f7f7f7; }
     .btn.active{
-      background:#e0f2ff;
-      border-color:#38bdf8;
-      color:#0369a1;
-      box-shadow:0 0 0 1px rgba(56,189,248,.2);
+      border-color: rgba(0,120,255,.55);
+      box-shadow: 0 0 0 3px rgba(0,120,255,.18);
+    }
+    .btn.danger{ border-color: rgba(200,0,0,.28); }
+    .btn.danger:hover{ background: rgba(200,0,0,.06); }
+
+    .hint{ font-size:13px; opacity:.75; flex: 1 1 320px; }
+    kbd{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      font-size:12px; border:1px solid rgba(0,0,0,.2); border-bottom-width:2px;
+      padding:1px 6px; border-radius:6px; background:#fafafa;
+    }
+    .status{ font-size:13px; opacity:.9; white-space:nowrap; }
+
+    .textControls{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-size:13px;
+      white-space:nowrap;
+    }
+    .textControls input[type="color"]{
+      width:26px;
+      height:26px;
+      padding:0;
+      border-radius:6px;
+      border:1px solid rgba(0,0,0,.18);
+      background:#fff;
+      cursor:pointer;
+    }
+    .btn.tiny{
+      padding:4px 7px;
+      font-size:12px;
+      border-radius:8px;
+    }
+    .btn.tiny.active{
+      border-color: rgba(0,120,255,.7);
+      box-shadow:0 0 0 2px rgba(0,120,255,.22);
     }
 
     #board{
@@ -76,71 +96,60 @@
         linear-gradient(var(--bg), var(--bg)),
         repeating-linear-gradient(0deg, transparent, transparent 23px, var(--grid) 24px),
         repeating-linear-gradient(90deg, transparent, transparent 23px, var(--grid) 24px);
-      background-blend-mode:normal,multiply,multiply;
     }
-
     #viewport{
-      position:absolute; left:0; top:0; right:0; bottom:0;
-      transform-origin:0 0;
-    }
-
-    #wires{
-      position:absolute; left:0; top:0; right:0; bottom:0;
-      pointer-events:none;
+      position:absolute;
+      left:0; top:0;
+      width:8000px;
+      height:8000px;
+      transform-origin: 0 0;
     }
 
     #world{
-      position:absolute; left:0; top:0; right:0; bottom:0;
+      position:absolute;
+      left:0;
+      top:0;
+      width:100%;
+      height:100%;
       pointer-events:none;
     }
 
-    .ghost{
-      position:absolute;
-      inset:0;
-      display:flex; align-items:center; justify-content:center;
-      color:rgba(0,0,0,.35);
-      pointer-events:none;
-      font-size:14px;
+    svg{
+      position:absolute; inset:0;
+      width:100%;
+      height:100%;
+      overflow:visible;
+      pointer-events:auto;
     }
 
     .pop{
       position:absolute;
-      min-width:120px;
-      max-width:360px;
-      padding:8px 14px;
-      border-radius:999px;
+      width:20ch;
+      max-width:48ch;
       background:#fff;
-      border:2px solid #000;
-      box-shadow:0 6px 18px rgba(15,23,42,.18);
+      border:1px solid rgba(0,0,0,.55);
+      border-radius:14px;
+      box-shadow:0 8px 24px rgba(0,0,0,.10);
+      padding:10px;
       box-sizing:border-box;
       user-select:none;
       cursor:grab;
       display:flex;
       align-items:center;
       justify-content:center;
+      touch-action: none;
       pointer-events:auto;
-      touch-action:none;
     }
-
     .pop:active{ cursor:grabbing; }
-
-    .pop.selected{
-      border-color:#2563eb;
-      box-shadow:0 0 0 2px rgba(37,99,235,.35);
-    }
-
-    .pop.linking{
-      border-style:dashed;
-      border-color:rgba(14,165,233,.9);
-      box-shadow:0 0 0 2px rgba(14,165,233,.4);
-    }
+    .pop.selected{ outline:3px solid rgba(0,120,255,.25); }
+    .pop.linking{ background:rgba(0,120,255,.08)!important; border-color:rgba(0,120,255,.35)!important; }
 
     .body{
       width:100%;
       border:0;
       outline:0;
       resize:none;
-      overflow:hidden;   /* niente scrollbar interne, altezza gestita via JS */
+      overflow-y:auto;      /* se qualcosa va storto puoi comunque scorrere */
       background:transparent;
       color:inherit;
       font-size:14px;
@@ -154,173 +163,127 @@
       text-align:center;
     }
 
-    .body::placeholder{ color:rgba(0,0,0,.3); }
-
     .linkLine{
-      fill:none;
-      stroke:#111827;
-      stroke-width:2;
       pointer-events:stroke;
-      stroke-linecap:round;
+      fill: none;
+      cursor:pointer;
+      stroke: rgba(0,0,0,.55);
+      stroke-width: 2;
+      stroke-linecap: round;
     }
     .linkLine.selected{
-      stroke:#2563eb;
-      stroke-width:3;
+      stroke-width: 3;
     }
 
-    .linkLabel{
-      font-size:11px;
-      background:rgba(255,255,255,.95);
-      padding:2px 6px;
-      border-radius:999px;
-      border:1px solid rgba(0,0,0,.18);
-      pointer-events:auto;
-      cursor:pointer;
-      white-space:nowrap;
-      user-select:none;
+    .ghost{
+      position:absolute; inset:0; pointer-events:none;
+      display:flex; align-items:center; justify-content:center;
+      font-size:14px; opacity:.55;
     }
 
-    #mapTitle{
-      font-weight:700;
-      letter-spacing:.18em;
-      font-size:16px;
+    @media print {
+      header { display:none !important; }
+      .ghost { display:none !important; }
+
+      html, body { height: 100% !important; }
+      #app { height: 100% !important; }
+
+      #board {
+        background:#fff !important;
+        overflow: visible !important;
+        height: 100vh !important;
+      }
+
+      #wires {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      svg {
+        overflow: visible !important;
+      }
+    }
+
+    #mapTitle {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      user-select: none;
       margin-left:auto;
-      margin-right:6px;
-    }
-
-    .status{
-      font-size:12px;
-      padding:2px 8px;
-      border-radius:999px;
-      background:#f3f4f6;
-      color:#4b5563;
-      margin-left:4px;
     }
 
     .homeLogo{
-      display:inline-flex;
+      margin-left: 10px;
+      text-decoration: none;
+    }
+    .homeLogo .logoLetters{
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      border: 2px solid rgba(0,0,0,.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 2px;
+      color: var(--ink);
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,.12);
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .homeLogo:hover .logoLetters{
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0,0,0,.16);
+      border-color: rgba(0,120,255,.6);
+    }
+
+    /* POPUP COLLEGAMENTO */
+    .modalOverlay{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.35);
+      display:none;
       align-items:center;
       justify-content:center;
-      width:34px;
-      height:34px;
-      border-radius:50%;
-      border:2px solid #111827;
-      text-decoration:none;
-      color:#111827;
-      font-weight:700;
-      margin-left:4px;
-      background:#f9fafb;
+      z-index:9999;
     }
-    .logoLetters{ font-size:14px; letter-spacing:.04em; }
-
-    .zoomControls{
-      position:absolute;
-      right:10px;
-      bottom:10px;
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-      pointer-events:auto;
+    .modal{
+      width:min(420px, 92vw);
+      background:#fff;
+      border:1px solid rgba(0,0,0,.25);
+      border-radius:16px;
+      box-shadow:0 16px 50px rgba(0,0,0,.20);
+      padding:14px;
     }
-
-    .zoomControls .btn{
-      width:30px; height:30px;
-      padding:0;
-      justify-content:center;
-      border-radius:999px;
-    }
-
-    .linkOptions{
-      position:absolute;
-      left:10px;
-      bottom:10px;
-      background:rgba(255,255,255,.95);
-      border-radius:999px;
-      box-shadow:0 6px 18px rgba(15,23,42,.25);
-      padding:4px 8px;
-      display:flex;
-      align-items:center;
-      gap:6px;
-      font-size:12px;
-      pointer-events:auto;
-    }
-    .linkOptions.hidden{ display:none; }
-
-    .linkOptions span.label{
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.06em;
-      color:#6b7280;
-    }
-
-    .linkOptions .btn{
-      padding:2px 8px;
-      font-size:11px;
-      border-radius:999px;
-    }
-
-    .textControls{
-      display:flex; align-items:center; gap:4px;
-      margin-left:8px;
-    }
-    .textControls span{ font-size:13px; }
-
-    #txtColor{
-      width:30px; height:22px; padding:0; border-radius:999px;
-      border:1px solid rgba(0,0,0,.2);
-    }
-
-    @media (max-width:768px){
-      .headerInner{
-        flex-wrap:wrap;
-        row-gap:4px;
-      }
-      #mapTitle{
-        order:-1;
-        flex-basis:100%;
-        text-align:center;
-        margin:2px auto 4px auto;
-      }
-    }
-
-    @media print{
-      body,html,#app,#board,#viewport,#world{ height:auto; }
-      header{ display:none; }
-      #board{
-        background:#fff;
-        overflow:visible;
-      }
-      .zoomControls,
-      .linkOptions{
-        display:none!important;
-      }
-      .pop{
-        box-shadow:none;
-        page-break-inside:avoid;
-      }
-      #wires{
-        overflow:visible;
-      }
-    }
+    .modal h3{ margin:0 0 10px 0; font-size:16px; }
+    .modal .row{ display:flex; gap:12px; flex-wrap:wrap; margin:10px 0; }
+    .modal label{ display:flex; gap:8px; align-items:center; font-size:14px; cursor:pointer; }
+    .modal .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:12px; }
   </style>
 </head>
+
 <body>
 <div id="app">
-  <header>
-    <div class="headerInner" id="headerInner">
-      <div class="headerGroup">
-        <button class="btn" id="btnNew">+ Nuovo pop</button>
-        <button class="btn" id="btnMove">Sposta</button>
-        <button class="btn" id="btnLink">Collega</button>
-        <button class="btn" id="btnDelete">Elimina</button>
-      </div>
+    
+  <header id="mainHeader">
+    <div class="headerInner">
+      <button class="btn" id="btnNew">+ Nuovo pop</button>
+      <button class="btn" id="btnMove">Sposta</button>
+      <button class="btn" id="btnLink">Collega</button>
+      <button class="btn danger" id="btnDelete">Elimina</button>
 
-      <div class="headerGroup">
-        <button class="btn" id="btnExportPdf">Esporta PDF</button>
-        <button class="btn" id="btnExportJson">Esporta JSON</button>
-        <button class="btn" id="btnExportHtml">Esporta HTML</button>
-        <button class="btn" id="btnImport">Importa</button>
-      </div>
+      <button class="btn" id="btnPdf">Esporta PDF</button>
+      <button class="btn" id="btnExportJson">Esporta JSON</button>
+      <button class="btn" id="btnExportHtml">Esporta HTML</button>
+      <button class="btn" id="btnImport">Importa</button>
+      <input id="fileInput" type="file" accept=".json,.html" style="display:none" />
+
+      <button class="btn tiny" id="btnZoomIn">+</button>
+      <button class="btn tiny" id="btnZoomOut">-</button>
+
+      <span class="hint">
+        Doppio click = crea box • Trascina = sposta • click linea = seleziona (per eliminare) • doppio click linea = modifica • <kbd>CANC</kbd>/Elimina = elimina • <kbd>ESC</kbd> = annulla collega
+      </span>
 
       <div class="textControls">
         <span>Testo:</span>
@@ -333,14 +296,13 @@
       <span class="status" id="status">Avvio...</span>
       <span id="mapTitle">MAPPA MENTALE</span>
 
-      <!-- LOGO/LINK ALLA PAGINA PRINCIPALE ANTIMAPPIFICIO -->
       <a class="homeLogo"
          href="https://sptzetaevi.github.io/antimappificio/"
          title="Torna alla pagina principale ANTIMAPPIFICIO">
         <span class="logoLetters">A&nbsp;M</span>
       </a>
-  
     </div>
+
     <div class="headerHandle" id="headerHandle" title="Mostra/nascondi strumenti"></div>
   </header>
 
@@ -350,50 +312,40 @@
       <div id="world"></div>
     </div>
 
-    <div class="ghost" id="ghost">Doppio click per creare il primo pop</div>
-
-    <div class="zoomControls">
-      <button class="btn circle" id="btnZoomIn">+</button>
-      <button class="btn circle" id="btnZoomOut">−</button>
-    </div>
-
-    <div class="linkOptions hidden" id="linkOptions">
-      <span class="label">Linea</span>
-      <button class="btn tiny" data-shape="straight">Retta</button>
-      <button class="btn tiny" data-shape="curve">Curva</button>
-    </div>
-
+    <div class="ghost">Doppio click sullo sfondo per creare un pop</div>
   </div>
-</div>
 
 <script>
-(function(){
+(function () {
   var board = document.getElementById("board");
+  var svg = document.getElementById("wires");
   var viewport = document.getElementById("viewport");
-  var wires = document.getElementById("wires");
   var world = document.getElementById("world");
-  var ghost = document.getElementById("ghost");
+  var statusEl = document.getElementById("status");
 
-  var headerInner = document.getElementById("headerInner");
+  var header = document.getElementById("mainHeader");
   var headerHandle = document.getElementById("headerHandle");
+  var headerCollapsed = false;
+
+  headerHandle.addEventListener("click", function(e){
+    e.stopPropagation();
+    headerCollapsed = !headerCollapsed;
+    if (headerCollapsed) header.classList.add("collapsed");
+    else header.classList.remove("collapsed");
+  });
 
   var btnNew = document.getElementById("btnNew");
-  var btnMove = document.getElementById("btnMove");
   var btnLink = document.getElementById("btnLink");
   var btnDelete = document.getElementById("btnDelete");
-
-  var btnExportPdf = document.getElementById("btnExportPdf");
+  var btnPdf = document.getElementById("btnPdf");
   var btnExportJson = document.getElementById("btnExportJson");
   var btnExportHtml = document.getElementById("btnExportHtml");
   var btnImport = document.getElementById("btnImport");
-
+  var btnMove = document.getElementById("btnMove");
+  var fileInput = document.getElementById("fileInput");
   var btnZoomIn = document.getElementById("btnZoomIn");
   var btnZoomOut = document.getElementById("btnZoomOut");
 
-  var linkOptionsEl = document.getElementById("linkOptions");
-  var linkShapeButtons = linkOptionsEl.querySelectorAll("button[data-shape]");
-
-  var statusEl = document.getElementById("status");
   var txtColor = document.getElementById("txtColor");
   var btnSizeSmall = document.getElementById("btnSizeSmall");
   var btnSizeLarge = document.getElementById("btnSizeLarge");
@@ -403,8 +355,8 @@
   function uid(){ return Math.random().toString(36).slice(2, 10); }
   function boardRect(){ return board.getBoundingClientRect(); }
 
-  var pops = [];   // {id,x,y,text,color,size,bold,_maxHeight}
-  var links = [];  // {id,from,to,end,shape}
+  var pops = [];   // {id,x,y,text,color,size,bold,height}
+  var links = [];  // {id,from,to,end,shape,curveDir}
   var selectedBoxId = null;
   var selectedLinkId = null;
   var linkingFrom = null;
@@ -421,43 +373,299 @@
   }
 
   function screenToWorld(clientX, clientY){
-    var r = boardRect();
-    var sx = clientX - r.left;
-    var sy = clientY - r.top;
-    return { x:(sx - view.x)/view.s, y:(sy - view.y)/view.s };
+    var br = board.getBoundingClientRect();
+    var sx = clientX - br.left;
+    var sy = clientY - br.top;
+    return { x: (sx - view.x)/view.s, y: (sy - view.y)/view.s };
   }
 
   applyView();
 
-  headerHandle.addEventListener("click", function(){
-    headerInner.classList.toggle("hidden");
+  var pointers = new Map();
+  var panState = null;
+  var pinchState = null;
+
+  function dist(a,b){
+    var dx=a.x-b.x, dy=a.y-b.y;
+    return Math.hypot(dx,dy);
+  }
+
+  board.addEventListener("pointerdown", function(e){
+    if (e.target.closest(".pop")) return;
+
+    board.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+
+    if (pointers.size === 1){
+      panState = { startX:view.x, startY:view.y, p0:{x:e.clientX,y:e.clientY} };
+      pinchState = null;
+    }
+
+    if (pointers.size === 2){
+      var arr = Array.from(pointers.values());
+      var pA = arr[0], pB = arr[1];
+      var mid = { x:(pA.x+pB.x)/2, y:(pA.y+pB.y)/2 };
+      var wMid = screenToWorld(mid.x, mid.y);
+
+      pinchState = {
+        startS: view.s,
+        startD: dist(pA,pB),
+        midScreen: mid,
+        midWorld: wMid
+      };
+      panState = null;
+    }
   });
 
-  function clampToBoard(x, y){
-    var r = boardRect();
-    var maxX = r.width - 80;
-    var maxY = r.height - 40;
-    return {
-      x: Math.max(20, Math.min(maxX, x)),
-      y: Math.max(20, Math.min(maxY, y))
+  board.addEventListener("pointermove", function(e){
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+
+    if (pinchState && pointers.size >= 2){
+      var arr = Array.from(pointers.values());
+      var pA = arr[0], pB = arr[1];
+      var d = dist(pA,pB);
+      view.s = clampScale(pinchState.startS * (d / pinchState.startD));
+
+      var br = board.getBoundingClientRect();
+      var midSx = pinchState.midScreen.x - br.left;
+      var midSy = pinchState.midScreen.y - br.top;
+
+      view.x = midSx - pinchState.midWorld.x * view.s;
+      view.y = midSy - pinchState.midWorld.y * view.s;
+
+      applyView();
+      renderLinks();
+      return;
+    }
+
+    if (pointers.size === 1 && panState){
+      view.x = panState.startX + (e.clientX - panState.p0.x);
+      view.y = panState.startY + (e.clientY - panState.p0.y);
+      applyView();
+      renderLinks();
+    }
+  });
+
+  board.addEventListener("pointerup", function(e){
+    pointers.delete(e.pointerId);
+    if (pointers.size === 0){
+      panState = null;
+      pinchState = null;
+    }
+  });
+
+  board.addEventListener("pointercancel", function(){
+    pointers.clear();
+    panState = null;
+    pinchState = null;
+  });
+
+  board.addEventListener("wheel", function(e){
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+
+    var before = screenToWorld(e.clientX, e.clientY);
+    var factor = (e.deltaY < 0) ? 1.08 : 0.92;
+    view.s = clampScale(view.s * factor);
+
+    var br = board.getBoundingClientRect();
+    var sx = e.clientX - br.left;
+    var sy = e.clientY - br.top;
+
+    view.x = sx - before.x * view.s;
+    view.y = sy - before.y * view.s;
+
+    applyView();
+    renderLinks();
+  }, { passive:false });
+
+
+  function zoomAroundCenter(factor){
+    var br = board.getBoundingClientRect();
+    var cx = br.left + br.width/2;
+    var cy = br.top + br.height/2;
+    var before = screenToWorld(cx, cy);
+
+    view.s = clampScale(view.s * factor);
+
+    var sx = cx - br.left;
+    var sy = cy - br.top;
+
+    view.x = sx - before.x * view.s;
+    view.y = sy - before.y * view.s;
+
+    applyView();
+    renderLinks();
+  }
+
+  var linkPreset = { end: "arrow", shape: "straight", curveDir: 1 };
+  var linkModal = null;
+
+  function ensureLinkModal() {
+    if (linkModal) return;
+
+    linkModal = document.createElement("div");
+    linkModal.className = "modalOverlay";
+    linkModal.innerHTML =
+      '<div class="modal" role="dialog" aria-modal="true">' +
+        '<h3>Opzioni collegamento</h3>' +
+        '<div class="row">' +
+          '<label><input type="radio" name="linkEnd" value="none"> Linea semplice</label>' +
+          '<label><input type="radio" name="linkEnd" value="arrow"> Freccia</label>' +
+        '</div>' +
+        '<div class="row">' +
+          '<label><input type="radio" name="linkShape" value="straight"> Retta</label>' +
+          '<label><input type="radio" name="linkShape" value="curve"> Curva</label>' +
+        '</div>' +
+        '<div class="row" data-curve-row>' +
+          '<label><input type="radio" name="curveDir" value="down"> Curva verso il basso</label>' +
+          '<label><input type="radio" name="curveDir" value="up"> Curva verso l\'alto</label>' +
+        '</div>' +
+        '<div class="actions">' +
+          '<button class="btn" id="linkOptCancel">Annulla</button>' +
+          '<button class="btn" id="linkOptOk">OK</button>' +
+        '</div>' +
+      '</div>';
+
+    document.body.appendChild(linkModal);
+
+    var shapeRadios = linkModal.querySelectorAll('input[name="linkShape"]');
+    var curveRadios = linkModal.querySelectorAll('input[name="curveDir"]');
+    var curveLabels = [];
+    curveRadios.forEach(function(r){
+      if (r.parentElement) curveLabels.push(r.parentElement);
+    });
+
+    function updateCurveRadiosDisabled() {
+      var shapeVal = (linkModal.querySelector('input[name="linkShape"]:checked') || {}).value;
+      var disabled = shapeVal !== 'curve';
+
+      curveRadios.forEach(function(r){
+        r.disabled = disabled;
+      });
+      curveLabels.forEach(function(lbl){
+        lbl.style.opacity = disabled ? 0.5 : 1;
+      });
+    }
+
+    shapeRadios.forEach(function(r){
+      r.addEventListener('change', updateCurveRadiosDisabled);
+    });
+
+    linkModal._updateCurveRadiosDisabled = updateCurveRadiosDisabled;
+  }
+
+  function openLinkOptions(done) {
+    ensureLinkModal();
+
+    var endRadio = linkModal.querySelector('input[name="linkEnd"][value="' + linkPreset.end + '"]');
+    var shapeRadio = linkModal.querySelector('input[name="linkShape"][value="' + linkPreset.shape + '"]');
+    if (endRadio) endRadio.checked = true;
+    if (shapeRadio) shapeRadio.checked = true;
+
+    var curveRadioVal = (linkPreset.curveDir === -1) ? "up" : "down";
+    var curveRadio = linkModal.querySelector('input[name="curveDir"][value="' + curveRadioVal + '"]');
+    if (curveRadio) curveRadio.checked = true;
+
+    if (typeof linkModal._updateCurveRadiosDisabled === "function") {
+      linkModal._updateCurveRadiosDisabled();
+    }
+
+    linkModal.style.display = "flex";
+
+    function close() {
+      linkModal.style.display = "none";
+      okBtn.onclick = null;
+      cancelBtn.onclick = null;
+      linkModal.onclick = null;
+    }
+
+    var okBtn = linkModal.querySelector("#linkOptOk");
+    var cancelBtn = linkModal.querySelector("#linkOptCancel");
+
+    okBtn.onclick = function () {
+      var endVal = (linkModal.querySelector('input[name="linkEnd"]:checked') || {}).value || "arrow";
+      var shapeVal = (linkModal.querySelector('input[name="linkShape"]:checked') || {}).value || "straight";
+
+      var curveDir = linkPreset.curveDir || 1;
+      if (shapeVal === "curve") {
+        var curveVal = (linkModal.querySelector('input[name="curveDir"]:checked') || {}).value || "down";
+        curveDir = (curveVal === "up") ? -1 : 1;
+      }
+
+      linkPreset = { end: endVal, shape: shapeVal, curveDir: curveDir };
+      close();
+      done(true);
+    };
+
+    cancelBtn.onclick = function () {
+      close();
+      done(false);
+    };
+
+    linkModal.onclick = function (e) {
+      if (e.target === linkModal) {
+        close();
+        done(false);
+      }
     };
   }
 
-  function clearSelection() {
+  function clampToBoard(x, y) {
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
+    return { x:x, y:y };
+  }
+
+  function disableTextControls() {
+    txtColor.disabled = true;
+    btnSizeSmall.disabled = true;
+    btnSizeLarge.disabled = true;
+    btnBold.disabled = true;
+
+    btnSizeSmall.classList.remove("active");
+    btnSizeLarge.classList.remove("active");
+    btnBold.classList.remove("active");
+  }
+
+  function enableTextControlsForPop(p) {
+    txtColor.disabled = false;
+    btnSizeSmall.disabled = false;
+    btnSizeLarge.disabled = false;
+    btnBold.disabled = false;
+
+    if (!p.color) p.color = "#000000";
+    if (!p.size) p.size = "small";
+    if (typeof p.bold === "undefined") p.bold = false;
+
+    txtColor.value = p.color;
+
+    btnSizeSmall.classList.toggle("active", p.size === "small");
+    btnSizeLarge.classList.toggle("active", p.size === "large");
+    btnBold.classList.toggle("active", !!p.bold);
+  }
+
+  function updateTextControls() {
+    if (!selectedBoxId) {
+      disableTextControls();
+      return;
+    }
+    var p = pops.find(function(pp){ return pp.id === selectedBoxId; });
+    if (!p) {
+      disableTextControls();
+      return;
+    }
+    enableTextControlsForPop(p);
+  }
+
+  function clearSelections() {
     selectedBoxId = null;
     selectedLinkId = null;
-    linkingFrom = null;
-
     var a = document.querySelectorAll(".pop");
-    for (var i=0;i<a.length;i++) {
-      a[i].classList.remove("selected");
-      a[i].classList.remove("linking");
-    }
+    for (var i=0;i<a.length;i++) a[i].classList.remove("selected");
     var b = document.querySelectorAll(".linkLine");
     for (var j=0;j<b.length;j++) b[j].classList.remove("selected");
-
-    btnLink.classList.remove("active");
-    hideLinkOptions();
     updateTextControls();
   }
 
@@ -483,7 +691,6 @@
     var b = document.querySelectorAll(".pop");
     for (var j=0;j<b.length;j++) b[j].classList.remove("selected");
     updateTextControls();
-    showLinkOptions();
   }
 
   function setLinkMode(on) {
@@ -491,14 +698,21 @@
       if (moveMode) setMoveMode(false);
       if (!selectedBoxId) { setStatus("Seleziona un box prima di collegare."); return; }
 
-      linkingFrom = selectedBoxId;
-      btnLink.classList.add("active");
-      var a = document.querySelectorAll(".pop");
-      for (var i=0;i<a.length;i++) {
-        a[i].classList.toggle("linking", a[i].dataset.id === linkingFrom);
-      }
-      setStatus("Modalità collega: clicca un altro box per creare il collegamento.");
-      hideLinkOptions();
+      linkPreset = linkPreset || { end:"arrow", shape:"straight", curveDir:1 };
+
+      openLinkOptions(function (ok) {
+        if (!ok) { setStatus("Collegamento annullato."); return; }
+
+        linkingFrom = selectedBoxId;
+        btnLink.classList.add("active");
+        var a = document.querySelectorAll(".pop");
+        for (var i=0;i<a.length;i++) {
+          a[i].classList.toggle("linking", a[i].dataset.id === linkingFrom);
+        }
+        setStatus("Modalita collega: clicca un altro box.");
+      });
+
+      return;
     } else {
       linkingFrom = null;
       btnLink.classList.remove("active");
@@ -507,84 +721,62 @@
       setStatus("Pronto");
     }
   }
-
+      
   function setMoveMode(on) {
     moveMode = !!on;
+
     if (moveMode) {
-      btnMove.classList.add("active");
-      setStatus("Modalità sposta: trascina lo sfondo per muovere la mappa.");
       setLinkMode(false);
+      btnMove.classList.add("active");
+      setStatus("Modalita sposta: trascina i box.");
     } else {
       btnMove.classList.remove("active");
       setStatus("Pronto");
     }
-  }
 
-  function hideLinkOptions(){
-    linkOptionsEl.classList.add("hidden");
-  }
-
-  function showLinkOptions(){
-    if (!selectedLinkId) { hideLinkOptions(); return; }
-    linkOptionsEl.classList.remove("hidden");
-
-    var l = links.find(function(ll){ return ll.id === selectedLinkId; });
-    if (!l) return;
-
-    linkShapeButtons.forEach(function(btn){
-      var s = btn.getAttribute("data-shape");
-      btn.classList.toggle("active", l.shape === s);
-    });
-  }
-
-  linkShapeButtons.forEach(function(btn){
-    btn.addEventListener("click", function(){
-      if (!selectedLinkId) return;
-      var l = links.find(function(ll){ return ll.id === selectedLinkId; });
-      if (!l) return;
-      l.shape = btn.getAttribute("data-shape") || "straight";
-      showLinkOptions();
-      renderLinks();
-    });
-  });
-
-  function autoGrow(ta, popRef) {
-    // calcola l'altezza necessaria al contenuto
-    ta.style.height = "auto";
-    var newH = ta.scrollHeight;
-
-    // se ho il riferimento al pop, memorizzo la massima altezza raggiunta
-    if (popRef) {
-      if (!popRef._maxHeight || newH > popRef._maxHeight) {
-        popRef._maxHeight = newH;
-      }
-      newH = popRef._maxHeight;
+    var tas = document.querySelectorAll(".pop .body");
+    for (var i = 0; i < tas.length; i++) {
+      tas[i].readOnly = moveMode;
     }
-
-    // applico sempre l'altezza massima raggiunta
-    ta.style.height = newH + "px";
+  }
+  
+  /* NUOVA VERSIONE: cresce ma non si restringe */
+  function autoGrow(ta, popModel) {
+    ta.style.height = "auto";
+    var needed = ta.scrollHeight;
+    if (popModel) {
+      if (!popModel.height || needed > popModel.height) {
+        popModel.height = needed;
+      }
+      ta.style.height = popModel.height + "px";
+    } else {
+      ta.style.height = needed + "px";
+    }
   }
 
   function resizeSelectedTextarea() {
     if (!selectedBoxId) return;
-    var ta = document.querySelector('.pop[data-id="'+selectedBoxId+'"] .body');
     var p = pops.find(function(pp){ return pp.id === selectedBoxId; });
-    if (ta && p) autoGrow(ta, p);
+    if (!p) return;
+    var ta = document.querySelector('.pop[data-id="' + selectedBoxId + '"] .body');
+    if (ta) autoGrow(ta, p);
   }
 
   function createPop(x, y) {
-    var p = { id: uid(), x: x, y: y, text: "", color:"#000000", size:"small", bold:false, _maxHeight:0 };
+    var p = { id: uid(), x: x, y: y, text: "", color:"#000000", size:"small", bold:false, height:0 };
     pops.push(p);
     render();
     selectBox(p.id);
   }
 
-  function addLink(from, to) {
+  function addLink(from, to, preset) {
     if (!from || !to || from === to) return;
     for (var i=0;i<links.length;i++) {
       if (links[i].from === from && links[i].to === to) return;
     }
-    links.push({ id: uid(), from: from, to: to, end: "arrow", shape: "straight" });
+    var p = preset || linkPreset || { end:"arrow", shape:"straight", curveDir:1 };
+    var curveDir = (typeof p.curveDir === "number") ? p.curveDir : 1;
+    links.push({ id: uid(), from: from, to: to, end: p.end, shape: p.shape, curveDir: curveDir });
   }
 
   function deleteSelected() {
@@ -605,208 +797,143 @@
       setStatus("Box eliminato.");
       return;
     }
+    setStatus("Nessuna selezione.");
   }
 
-  function getPopById(id){
-    for (var i=0;i<pops.length;i++){
-      if (pops[i].id === id) return pops[i];
-    }
-    return null;
-  }
-
-  function updateTextControls(){
-    var p = selectedBoxId ? getPopById(selectedBoxId) : null;
-
-    var state = !!p;
-    txtColor.disabled = !state;
-    btnSizeSmall.disabled = !state;
-    btnSizeLarge.disabled = !state;
-    btnBold.disabled = !state;
-
-    if (!p) return;
-
-    txtColor.value = p.color || "#000000";
-    btnSizeSmall.classList.toggle("active", p.size === "small");
-    btnSizeLarge.classList.toggle("active", p.size === "large");
-    btnBold.classList.toggle("active", !!p.bold);
-  }
-
-  function applyZoom(delta, centerX, centerY){
-    var before = screenToWorld(centerX, centerY);
-    var newScale = clampScale(view.s * (1 + delta));
-    view.s = newScale;
-    var after = screenToWorld(centerX, centerY);
-
-    view.x += (after.x - before.x) * view.s;
-    view.y += (after.y - before.y) * view.s;
-
-    applyView();
-    renderLinks();
-  }
-
-  btnZoomIn.addEventListener("click", function(){
-    var r = boardRect();
-    applyZoom(+0.2, r.width/2, r.height/2);
-  });
-
-  btnZoomOut.addEventListener("click", function(){
-    var r = boardRect();
-    applyZoom(-0.2, r.width/2, r.height/2);
-  });
-
-  board.addEventListener("wheel", function(e){
-    if (!e.ctrlKey) return;
-    e.preventDefault();
-    var delta = (e.deltaY > 0) ? -0.18 : +0.18;
-    applyZoom(delta, e.clientX, e.clientY);
-  }, { passive:false });
-
-  var panning = false;
-  var panStart = { x:0, y:0 };
-  var panViewStart = { x:0, y:0 };
-
-  board.addEventListener("pointerdown", function(e){
-    if (e.button !== 0) return;
-
-    if (e.target === board || e.target === viewport || e.target === world || e.target === wires) {
-      if (moveMode || (!e.target.closest(".pop") && !e.target.closest("textarea"))) {
-        panning = true;
-        panStart.x = e.clientX;
-        panStart.y = e.clientY;
-        panViewStart.x = view.x;
-        panViewStart.y = view.y;
-        board.setPointerCapture(e.pointerId);
-        clearSelection();
-        e.preventDefault();
-        return;
-      }
-    }
-  });
-
-  board.addEventListener("pointermove", function(e){
-    if (!panning) return;
-    var dx = e.clientX - panStart.x;
-    var dy = e.clientY - panStart.y;
-    view.x = panViewStart.x + dx;
-    view.y = panViewStart.y + dy;
-    applyView();
-    renderLinks();
-  });
-
-  board.addEventListener("pointerup", function(e){
-    if (!panning) return;
-    panning = false;
-    board.releasePointerCapture(e.pointerId);
-  });
-
-  board.addEventListener("dblclick", function(e){
-    if (e.target.closest(".pop") || e.target.closest("textarea")) return;
-    var pos = screenToWorld(e.clientX, e.clientY);
-    var c = clampToBoard(pos.x, pos.y);
-    createPop(c.x, c.y);
-  });
-
-  var svgNS = "http://www.w3.org/2000/svg";
-
-  function ensureDefs(){
-    if (!wires.querySelector("defs")){
-      var defs = document.createElementNS(svgNS, "defs");
-      var marker = document.createElementNS(svgNS, "marker");
-      marker.setAttribute("id", "arrow");
-      marker.setAttribute("markerWidth", "10");
-      marker.setAttribute("markerHeight", "7");
-      marker.setAttribute("refX", "9");
-      marker.setAttribute("refY", "3.5");
-      marker.setAttribute("orient", "auto");
-      var poly = document.createElementNS(svgNS, "polygon");
-      poly.setAttribute("points", "0 0, 10 3.5, 0 7");
-      poly.setAttribute("fill", "#111827");
-      marker.appendChild(poly);
-      defs.appendChild(marker);
-      wires.appendChild(defs);
-    }
-  }
-
-  ensureDefs();
-
-  function clearSvgLines(){
-    var defs = wires.querySelector("defs");
-    wires.innerHTML = "";
-    if (defs) wires.appendChild(defs);
-  }
-
-  function edgePoint(cx, cy, hw, hh, dx, dy){
-    if (dx === 0 && dy === 0) return { x:cx, y:cy };
-
-    var adx = Math.abs(dx);
-    var ady = Math.abs(dy);
-    var scale;
-    if (adx * hh > ady * hw) {
-      scale = hw / adx;
-    } else {
-      scale = hh / ady;
-    }
-    return { x: cx + dx*scale, y: cy + dy*scale };
-  }
-
-  function getBoxRectInBoard(popId){
-    var el = world.querySelector('.pop[data-id="'+popId+'"]');
+  function getPopBoxInBoardCoords(id) {
+    var el = document.querySelector('.pop[data-id="'+id+'"]');
     if (!el) return null;
-    var br = boardRect();
-    var r = el.getBoundingClientRect();
-    var x = r.left - br.left;
-    var y = r.top  - br.top;
-    var w = r.width;
-    var h = r.height;
-    return { x:x, y:y, w:w, h:h, cx:x+w/2, cy:y+h/2, hw:w/2, hh:h/2 };
+
+    var x = el.offsetLeft;
+    var y = el.offsetTop;
+    var w = el.offsetWidth;
+    var h = el.offsetHeight;
+
+    return {
+      cx: x + w/2, cy: y + h/2,
+      hw: w/2, hh: h/2
+    };
   }
 
-  function renderLinks(){
-    clearSvgLines();
-    ensureDefs();
+  function edgePoint(cx, cy, hw, hh, dx, dy) {
+    if (dx === 0 && dy === 0) return { x: cx, y: cy };
+    var tx = Math.abs(dx) / hw;
+    var ty = Math.abs(dy) / hh;
+    var t = 1 / Math.max(tx, ty);
+    return { x: cx + dx * t, y: cy + dy * t };
+  }
 
-    links.forEach(function(l){
-      var a = getBoxRectInBoard(l.from);
-      var b = getBoxRectInBoard(l.to);
-      if (!a || !b) return;
+  function renderLinks() {
+    while (svg.firstChild) svg.firstChild.remove();
 
-      var dx = b.cx - a.cx;
-      var dy = b.cy - a.cy;
+    var NS = "http://www.w3.org/2000/svg";
+    var defs = document.createElementNS(NS, "defs");
+    var marker = document.createElementNS(NS, "marker");
+    marker.setAttribute("id", "arrow");
+    marker.setAttribute("viewBox", "0 0 10 10");
+    marker.setAttribute("refX", "9");
+    marker.setAttribute("refY", "5");
+    marker.setAttribute("markerWidth", "7");
+    marker.setAttribute("markerHeight", "7");
+    marker.setAttribute("orient", "auto");
+    marker.setAttribute("markerUnits", "strokeWidth");
 
-      var p1 = edgePoint(a.cx, a.cy, a.hw, a.hh, dx, dy);
-      var p2 = edgePoint(b.cx, b.cy, b.hw, b.hh, -dx, -dy);
+    var path = document.createElementNS(NS, "path");
+    path.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
+    path.setAttribute("fill", "rgba(0,0,0,.55)");
+    marker.appendChild(path);
+    defs.appendChild(marker);
+    svg.appendChild(defs);
 
-      var path = document.createElementNS(svgNS, "path");
-      var midX = (p1.x + p2.x) / 2;
-      var midY = (p1.y + p2.y) / 2;
+    links.forEach(function (l) {
+      var A = getPopBoxInBoardCoords(l.from);
+      var B = getPopBoxInBoardCoords(l.to);
+      if (!A || !B) return;
 
-      var d;
-      if (l.shape === "curve") {
-        var k = 0.3;
-        var nx = -dy, ny = dx;
-        var len = Math.sqrt(nx*nx + ny*ny) || 1;
-        nx /= len; ny /= len;
-        var cx1 = midX + nx * k * 60;
-        var cy1 = midY + ny * k * 60;
-        d = "M " + p1.x + " " + p1.y + " Q " + cx1 + " " + cy1 + " " + p2.x + " " + p2.y;
+      var dx = B.cx - A.cx;
+      var dy = B.cy - A.cy;
+
+      var p1 = edgePoint(A.cx, A.cy, A.hw, A.hh, dx, dy);
+      var p2 = edgePoint(B.cx, B.cy, B.hw, B.hh, -dx, -dy);
+
+      var end = l.end || "arrow";
+      var shape = l.shape || "straight";
+
+      var color = "#000000";
+      var toPop = pops.find(function(pp){ return pp.id === l.to; });
+      if (toPop && toPop.color) color = toPop.color;
+
+      var elWire;
+
+      if (shape === "curve") {
+        var mx = (p1.x + p2.x) / 2;
+        var my = (p1.y + p2.y) / 2;
+
+        var len = Math.hypot(dx, dy) || 1;
+        var nx = -dy / len;
+        var ny =  dx / len;
+
+        var offset = Math.min(70, Math.max(20, len / 4));
+        var dir = (typeof l.curveDir === "number") ? l.curveDir : 1;
+        var cx = mx + nx * offset * dir;
+        var cy = my + ny * offset * dir;
+
+        elWire = document.createElementNS(NS, "path");
+        elWire.setAttribute("fill", "none");
+        elWire.setAttribute("d", "M " + p1.x + " " + p1.y + " Q " + cx + " " + cy + " " + p2.x + " " + p2.y);
       } else {
-        d = "M " + p1.x + " " + p1.y + " L " + p2.x + " " + p2.y;
+        elWire = document.createElementNS(NS, "line");
+        elWire.setAttribute("x1", p1.x);
+        elWire.setAttribute("y1", p1.y);
+        elWire.setAttribute("x2", p2.x);
+        elWire.setAttribute("y2", p2.y);
       }
 
-      path.setAttribute("d", d);
-      path.setAttribute("class","linkLine");
-      path.dataset.linkid = l.id;
-      path.setAttribute("marker-end", "url(#arrow)");
+      if (end === "arrow") {
+        elWire.setAttribute("marker-end", "url(#arrow)");
+      }
 
-      if (l.id === selectedLinkId) path.classList.add("selected");
+      elWire.classList.add("linkLine");
+      elWire.dataset.linkid = l.id;
+      elWire.style.stroke = color;
 
-      path.addEventListener("pointerdown", function(e){
+      if (l.id === selectedLinkId) elWire.classList.add("selected");
+
+      function handlePointerDown(e){
         e.stopPropagation();
         setLinkMode(false);
         selectLink(l.id);
-      });
+        setStatus("Collegamento selezionato.");
+      }
 
-      wires.appendChild(path);
+      function handleDblClick(e){
+        e.stopPropagation();
+        setLinkMode(false);
+        selectLink(l.id);
+
+        linkPreset = {
+          end: l.end || "arrow",
+          shape: l.shape || "straight",
+          curveDir: (typeof l.curveDir === "number") ? l.curveDir : 1
+        };
+
+        openLinkOptions(function(ok){
+          if (!ok) {
+            setStatus("Modifica collegamento annullata.");
+            return;
+          }
+          l.end = linkPreset.end;
+          l.shape = linkPreset.shape;
+          l.curveDir = linkPreset.curveDir;
+          renderLinks();
+          setStatus("Collegamento aggiornato.");
+        });
+      }
+
+      elWire.addEventListener("pointerdown", handlePointerDown);
+      elWire.addEventListener("dblclick", handleDblClick);
+
+      svg.appendChild(elWire);
     });
   }
 
@@ -821,7 +948,6 @@
       if (!p.color) p.color = "#000000";
       if (!p.size) p.size = "small";
       if (typeof p.bold === "undefined") p.bold = false;
-      if (typeof p._maxHeight === "undefined") p._maxHeight = 0;
 
       var el = document.createElement("div");
       el.className = "pop";
@@ -840,7 +966,11 @@
       ta.style.fontWeight = p.bold ? "700" : "400";
       ta.style.color = p.color || "#000000";
 
-      autoGrow(ta, p);
+      if (typeof p.height === "number" && p.height > 0) {
+        ta.style.height = p.height + "px";
+      } else {
+        autoGrow(ta, p);
+      }
 
       if (p.id === selectedBoxId) el.classList.add("selected");
       if (p.id === linkingFrom) el.classList.add("linking");
@@ -859,7 +989,7 @@
 
       el.addEventListener("click", function () {
         if (linkingFrom && linkingFrom !== p.id) {
-          addLink(linkingFrom, p.id);
+          addLink(linkingFrom, p.id, linkPreset);
           setLinkMode(false);
           renderLinks();
           setStatus("Collegamento creato.");
@@ -868,12 +998,9 @@
 
       var dragging = false, sx=0, sy=0, ox=0, oy=0;
 
-      el.addEventListener("pointerdown", function(e){
-        if (e.button !== 0) return;
-
-        if (!moveMode && e.target && e.target.tagName && e.target.tagName.toLowerCase() === "textarea") {
-          return;
-        }
+      el.addEventListener("pointerdown", function (e) {
+        if (e.pointerType === "mouse" && e.button !== 0) return;
+        if (!moveMode && e.target && e.target.tagName && e.target.tagName.toLowerCase() === "textarea") return;
 
         e.preventDefault();
         e.stopPropagation();
@@ -915,109 +1042,195 @@
     updateTextControls();
   }
 
-  btnNew.addEventListener("click", function(){
-    var r = boardRect();
-    var pos = screenToWorld(r.width/2, r.height/2);
-    var c = clampToBoard(pos.x, pos.y);
-    createPop(c.x, c.y);
-  });
+  function getState() {
+    return { version: 3, createdAt: new Date().toISOString(), pops: pops, links: links };
+  }
 
-  btnMove.addEventListener("click", function(){
-    setMoveMode(!moveMode);
-  });
-
-  btnLink.addEventListener("click", function(){
-    setLinkMode(!linkingFrom);
-  });
-
-  btnDelete.addEventListener("click", function(){
-    deleteSelected();
-  });
-
-  btnExportJson.addEventListener("click", function(){
-    var data = { pops:pops, links:links };
-    var blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
-    var url = URL.createObjectURL(blob);
+  function downloadBlob(name, blob) {
     var a = document.createElement("a");
+    var url = URL.createObjectURL(blob);
     a.href = url;
-    a.download = "mappa-mentale.json";
+    a.download = name;
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(url);
-  });
+    a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  }
 
-  btnExportHtml.addEventListener("click", function(){
-    alert("Per ora usa Esporta JSON e riapri la mappa qui.");
-  });
+  function exportJSON() {
+    var blob = new Blob([JSON.stringify(getState(), null, 2)], { type: "application/json;charset=utf-8" });
+    var name = "mappa_" + new Date().toISOString().slice(0,19).split(":").join("-") + ".json";
+    downloadBlob(name, blob);
+    setStatus("Esportato JSON.");
+  }
 
-  btnImport.addEventListener("click", function(){
-    var input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".json,application/json";
-    input.addEventListener("change", function(){
-      var file = input.files[0];
-      if (!file) return;
-      var reader = new FileReader();
-      reader.onload = function(e){
-        try{
-          var data = JSON.parse(e.target.result);
-          if (Array.isArray(data.pops) && Array.isArray(data.links)) {
-            pops = data.pops;
-            links = data.links;
-            render();
-            setStatus("Mappa caricata.");
-          } else if (data && Array.isArray(data.pops) && Array.isArray(data.links)) {
-            pops = data.pops;
-            links = data.links;
-            render();
-            setStatus("Mappa caricata.");
-          } else {
-            alert("Formato file non riconosciuto.");
-          }
-        } catch(err){
-          alert("Errore nel leggere il file.");
-        }
-      };
-      reader.readAsText(file);
+  function exportHTML() {
+    var state = JSON.stringify(getState(), null, 2);
+
+    var html =
+      '<!doctype html>' +
+      '<html lang="it">' +
+      '<head>' +
+      '<meta charset="utf-8"/>' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1"/>' +
+      '<title>Mappa esportata</title>' +
+      '</head>' +
+      '<body>' +
+      '<h3>Mappa esportata</h3>' +
+      '<p>Importa questo file nell\'app con il pulsante Importa.</p>' +
+      '<textarea id="popplet_export_data" style="display:none;">' +
+      state +
+      '</textarea>' +
+      '</body>' +
+      '</html>';
+
+    var blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    var name = "mappa_" + new Date().toISOString().slice(0,19).replace(/:/g,'-') + ".html";
+    downloadBlob(name, blob);
+    setStatus("Esportato HTML.");
+  }
+  
+  function parseImportedText(text) {
+    var t = (text || "").trim();
+
+    if (t.charAt(0) === "{" || t.charAt(0) === "[") {
+      return JSON.parse(t);
+    }
+
+    var re = /<textarea[^>]*id=["']popplet_export_data["'][^>]*>([\s\S]*?)<\/textarea>/i;
+    var m = text.match(re);
+    if (!m) throw new Error("File non riconosciuto");
+
+    return JSON.parse(m[1]);
+  }
+
+  function applyState(state) {
+    if (!state || !state.pops || !state.links) throw new Error("Dati incompleti");
+
+    pops = state.pops;
+    links = state.links;
+
+    clearSelections();
+    setLinkMode(false);
+    render();
+    setStatus("Import OK.");
+  }
+
+  function doImport() {
+    fileInput.value = "";
+    fileInput.click();
+  }
+
+  fileInput.addEventListener("change", function (e) {
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    file.text().then(function (text) {
+      var state = parseImportedText(text);
+      applyState(state);
+    }).catch(function (err) {
+      console.error(err);
+      setStatus("Errore import.");
+      alert("Import fallito: usa un file esportato da questa app (JSON o HTML).");
     });
-    input.click();
   });
+
+  function exportPDF() {
+    setStatus("Stampa: scegli Salva come PDF.");
+    window.print();
+  }
+
+  board.addEventListener("mousedown", function (e) {
+    if (e.target === board) {
+      clearSelections();
+      setLinkMode(false);
+      setStatus("Pronto");
+    }
+  });
+
+  board.addEventListener("dblclick", function (e) {
+    if (e.target && e.target.closest && e.target.closest(".pop")) return;
+    var p = screenToWorld(e.clientX, e.clientY);
+    var pos = clampToBoard(p.x, p.y);
+    createPop(pos.x, pos.y);
+  });
+
+  window.addEventListener("keydown", function (e) {
+    var key = (e.key || "").toLowerCase();
+    if (key === "delete" || key === "backspace") {
+      var active = document.activeElement;
+      var inEditor = active && active.tagName === "TEXTAREA";
+      if (!inEditor) { e.preventDefault(); deleteSelected(); }
+    }
+    if (key === "escape") setLinkMode(false);
+  });
+
+  btnNew.addEventListener("click", function () {
+    var r = boardRect();
+    createPop(20 + Math.random()*(r.width-260), 20 + Math.random()*(r.height-160));
+  });
+  btnLink.addEventListener("click", function () { setLinkMode(!linkingFrom); });
+  btnDelete.addEventListener("click", deleteSelected);
+  btnMove.addEventListener("click", function () { setMoveMode(!moveMode); });
+
+  btnPdf.addEventListener("click", exportPDF);
+  btnExportJson.addEventListener("click", exportJSON);
+  btnExportHtml.addEventListener("click", exportHTML);
+  btnImport.addEventListener("click", doImport);
+  btnZoomIn.addEventListener("click", function(){ zoomAroundCenter(1.15); });
+  btnZoomOut.addEventListener("click", function(){ zoomAroundCenter(1/1.15); });
 
   txtColor.addEventListener("input", function(){
     if (!selectedBoxId) return;
-    var p = getPopById(selectedBoxId);
+    var p = pops.find(function(pp){ return pp.id === selectedBoxId; });
     if (!p) return;
-    p.color = txtColor.value;
-    render();
-    selectBox(p.id);
+    p.color = txtColor.value || "#000000";
+
+    var ta = document.querySelector('.pop[data-id="'+p.id+'"] .body');
+    if (ta) ta.style.color = p.color;
+
+    var boxEl = document.querySelector('.pop[data-id="'+p.id+'"]');
+    if (boxEl) boxEl.style.borderColor = p.color;
+
+    renderLinks();
   });
 
   btnSizeSmall.addEventListener("click", function(){
     if (!selectedBoxId) return;
-    var p = getPopById(selectedBoxId);
+    var p = pops.find(function(pp){ return pp.id === selectedBoxId; });
     if (!p) return;
     p.size = "small";
-    render();
-    selectBox(p.id);
+    var ta = document.querySelector('.pop[data-id="'+p.id+'"] .body');
+    if (ta) {
+      ta.style.fontSize = "14px";
+      autoGrow(ta, p);
+    }
+    updateTextControls();
   });
 
   btnSizeLarge.addEventListener("click", function(){
     if (!selectedBoxId) return;
-    var p = getPopById(selectedBoxId);
+    var p = pops.find(function(pp){ return pp.id === selectedBoxId; });
     if (!p) return;
     p.size = "large";
-    render();
-    selectBox(p.id);
+    var ta = document.querySelector('.pop[data-id="'+p.id+'"] .body');
+    if (ta) {
+      ta.style.fontSize = "20px";
+      autoGrow(ta, p);
+    }
+    updateTextControls();
   });
 
   btnBold.addEventListener("click", function(){
     if (!selectedBoxId) return;
-    var p = getPopById(selectedBoxId);
+    var p = pops.find(function(pp){ return pp.id === selectedBoxId; });
     if (!p) return;
     p.bold = !p.bold;
     var ta = document.querySelector('.pop[data-id="'+p.id+'"] .body');
-    if (ta) ta.style.fontWeight = p.bold ? "700" : "400";
+    if (ta) {
+      ta.style.fontWeight = p.bold ? "700" : "400";
+      autoGrow(ta, p);
+    }
     updateTextControls();
-    resizeSelectedTextarea();
   });
 
   render();
